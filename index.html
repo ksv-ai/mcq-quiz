@@ -172,14 +172,14 @@ body {
 
 /* JSON Import */
 .drop-zone {
-  border: 2px dashed var(--border);
+  border: 1.5px dashed var(--border);
   border-radius: 8px;
-  padding: 28px 20px;
+  padding: 20px 16px;
   text-align: center;
-  cursor: pointer;
-  transition: all 0.18s;
   background: var(--bg);
+  cursor: pointer;
   position: relative;
+  transition: all 0.2s;
 }
 .drop-zone input[type=file] {
   position: absolute; inset: 0;
@@ -224,18 +224,19 @@ details.format-hint pre {
 .text-area-wrap { position: relative; }
 textarea.text-import {
   width: 100%;
-  min-height: 350px;
-  padding: 18px;
+  min-height: 200px;
+  padding: 16px;
   border: 1.5px solid var(--border);
   border-radius: 8px;
   font-family: 'Source Sans 3', sans-serif;
   font-size: 14px;
-  line-height: 1.7;
+  line-height: 1.6;
   color: var(--text);
   background: var(--bg);
   resize: vertical;
   transition: all 0.2s;
 }
+
 textarea.text-import:focus {
   outline: none;
   border-color: var(--accent);
