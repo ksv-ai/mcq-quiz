@@ -1185,54 +1185,62 @@ function parseTextInput() {
   if (!raw) { showStatus('textStatus', 'err', 'Nothing to parse.'); return; }
 
   try {
-    const questions = [];
-    // Logic for block format or csv-like lines
-    const blocks = raw.split(/\n\s*\n/).filter(b => b.trim());
+    let questions = [];
     
-    blocks.forEach(block => {
-      const lines = block.split('\n').map(l => l.trim()).filter(l => l);
-      
-      // CSV logic: if line has many commas/tabs
-      if (lines.length === 1 && (lines[0].includes(',') || lines[0].includes('\t'))) {
-        const sep = lines[0].includes('\t') ? '\t' : ',';
-        const parts = lines[0].split(sep).map(p => p.trim());
+    // Attempt line-by-line parsing for one-question-per-line format (Tab or Multiple Spaces)
+    const rawLines = raw.split(/\n/).map(l => l.trim()).filter(l => l);
+    rawLines.forEach(line => {
+      let parts = [];
+      if (line.includes('\t')) {
+        parts = line.split('\t').map(p => p.trim()).filter(p => p);
+      } else if (/\s{2,}/.test(line)) {
+        parts = line.split(/\s{2,}/).map(p => p.trim()).filter(p => p);
+      } else if (line.includes(',')) {
+        parts = line.split(',').map(p => p.trim()).filter(p => p);
+      }
+
+      if (parts.length >= 3) {
         const p = smartParseRow(parts);
         if (p) questions.push(p);
-        return;
-      }
-
-      if (lines.length < 3) return;
-
-      const qText = cleanQuestion(lines[0]);
-      const options = [];
-      let correct = -1;
-      
-      lines.slice(1).forEach((line, li) => {
-        let text = line;
-        let isCorrect = false;
-        if (text.startsWith('*')) { isCorrect = true; text = text.slice(1).trim(); }
-        
-        // Detect "Correct: A" or similar
-        if (text.toLowerCase().startsWith('correct:')) {
-          const val = text.split(':')[1].trim();
-          const idx = ['A','B','C','D','E'].indexOf(val.toUpperCase());
-          if (idx !== -1) correct = idx;
-          return;
-        }
-
-        // Strip labels A) B) C)
-        text = text.replace(/^[A-Fa-f][).]\s*/, '').trim();
-        if (text) {
-          if (isCorrect) correct = options.length;
-          options.push(text);
-        }
-      });
-      
-      if (options.length >= 2) {
-        if (correct === -1) correct = 0; // Default
-        questions.push({ question: qText, options, correct });
       }
     });
+
+    // Fallback: If no questions found as one-liners, use the block-based parser
+    if (questions.length === 0) {
+      const blocks = raw.split(/\n\s*\n/).filter(b => b.trim());
+      blocks.forEach(block => {
+        const blines = block.split('\n').map(l => l.trim()).filter(l => l);
+        if (blines.length < 2) return;
+
+        const qText = cleanQuestion(blines[0]);
+        const options = [];
+        let correct = -1;
+        
+        blines.slice(1).forEach((bl) => {
+          let text = bl;
+          let isCorrect = false;
+          if (text.startsWith('*')) { isCorrect = true; text = text.slice(1).trim(); }
+          
+          if (text.toLowerCase().startsWith('correct:')) {
+            const val = text.split(':')[1].trim();
+            const idx = ['A','B','C','D','E'].indexOf(val.toUpperCase());
+            if (idx !== -1) correct = idx;
+            return;
+          }
+
+          text = text.replace(/^[A-Fa-f][).]\s*/, '').trim();
+          if (text) {
+            if (isCorrect) correct = options.length;
+            options.push(text);
+          }
+        });
+        
+        if (options.length >= 2) {
+          if (correct === -1) correct = 0;
+          questions.push({ question: qText, options, correct });
+        }
+      });
+    }
 
     if (questions.length === 0) throw new Error('No valid questions found.');
     loadQuestions(questions, 'Text input');
@@ -1241,6 +1249,8 @@ function parseTextInput() {
     showStatus('textStatus', 'err', 'Error: ' + err.message);
   }
 }
+
+
 
 function showStatus(id, type, msg) {
   const el = document.getElementById(id);
