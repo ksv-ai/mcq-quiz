@@ -26,6 +26,28 @@
   --shadow: 0 2px 12px rgba(0,0,0,0.07);
   --shadow-md: 0 4px 20px rgba(0,0,0,0.1);
 }
+
+body.dark-mode {
+  --bg: #121212;
+  --surface: #1e1e1e;
+  --card: #1e1e1e;
+  --border: #333333;
+  --border-light: #2a2a2a;
+  --accent: #4a90e2;
+  --accent-light: #1a2a3a;
+  --green: #4caf50;
+  --green-light: #1e2e1e;
+  --red: #f44336;
+  --red-light: #2e1e1e;
+  --amber: #ff9800;
+  --amber-light: #2e261e;
+  --text: #e0e0e0;
+  --text-secondary: #aaaaaa;
+  --text-muted: #777777;
+  --shadow: 0 4px 15px rgba(0,0,0,0.3);
+  --shadow-md: 0 8px 30px rgba(0,0,0,0.4);
+}
+
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
@@ -43,7 +65,32 @@ body {
   padding: 32px 20px 60px;
 }
 
-/* ── Header ── */
+/* ── Top Controls ── */
+.top-controls {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.control-btn {
+  background: var(--surface);
+  border: 1.5px solid var(--border);
+  color: var(--text);
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.control-btn:hover {
+  background: var(--border-light);
+  border-color: var(--accent);
+}
+
 .site-header {
   text-align: center;
   margin-bottom: 36px;
@@ -52,17 +99,18 @@ body {
 }
 .site-header h1 {
   font-family: 'Source Serif 4', serif;
-  font-size: 2rem;
+  font-size: 2.2rem;
   font-weight: 700;
   color: var(--text);
   margin-bottom: 6px;
   letter-spacing: -0.3px;
 }
 .site-header p {
-  color: var(--text-muted);
-  font-size: 15px;
-  font-weight: 300;
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 400;
 }
+
 .subject-tag {
   display: inline-block;
   background: var(--accent-light);
@@ -176,59 +224,75 @@ details.format-hint pre {
 .text-area-wrap { position: relative; }
 textarea.text-import {
   width: 100%;
-  min-height: 200px;
-  padding: 14px;
-  border: 1px solid var(--border);
+  min-height: 350px;
+  padding: 18px;
+  border: 1.5px solid var(--border);
   border-radius: 8px;
-  font-family: 'Courier New', monospace;
-  font-size: 13px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 14px;
   line-height: 1.7;
   color: var(--text);
   background: var(--bg);
   resize: vertical;
-  transition: border-color 0.18s;
+  transition: all 0.2s;
 }
 textarea.text-import:focus {
   outline: none;
   border-color: var(--accent);
-  background: #fff;
+  background: var(--surface);
+  box-shadow: 0 0 0 3px var(--accent-light);
 }
-details.text-format-hint {
+
+details.text-format-hint, details.excel-format-hint {
   margin-top: 12px;
   border: 1px solid var(--border-light);
   border-radius: 7px;
   overflow: hidden;
 }
-details.text-format-hint summary {
-  padding: 10px 14px;
-  font-size: 13px;
+summary.hint-summary {
+  padding: 12px 16px;
+  font-size: 14px;
   font-weight: 600;
   color: var(--accent);
   cursor: pointer;
   background: var(--accent-light);
   list-style: none;
   user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
-details.text-format-hint summary::-webkit-details-marker { display: none; }
-details.text-format-hint .hint-body {
-  padding: 14px;
-  font-size: 13px;
+summary.hint-summary::after {
+  content: '▼';
+  font-size: 10px;
+  transition: transform 0.2s;
+}
+details[open] summary.hint-summary::after {
+  transform: rotate(180deg);
+}
+
+.hint-body {
+  padding: 16px;
+  font-size: 13.5px;
   color: var(--text-secondary);
   line-height: 1.8;
-  background: #f8f8f6;
+  background: var(--surface);
   border-top: 1px solid var(--border-light);
 }
-details.text-format-hint pre {
-  margin-top: 10px;
-  padding: 12px;
-  background: #efefed;
+.hint-body pre {
+  margin-top: 12px;
+  padding: 14px;
+  background: var(--bg);
   border-radius: 6px;
   font-family: 'Courier New', monospace;
-  font-size: 12px;
+  font-size: 12.5px;
   line-height: 1.7;
-  color: #444;
+  color: var(--text);
   overflow-x: auto;
+  border: 1px solid var(--border-light);
 }
+.hint-body strong { color: var(--text); }
+
 
 /* Status message */
 .status-msg {
@@ -619,9 +683,26 @@ select.round-select:focus { outline: none; border-color: var(--accent); }
   font-size: 13px; padding: 7px 12px;
   border-radius: 5px; margin-bottom: 5px;
 }
-.review-ans.your-ok { background: var(--green-light); color: #155733; }
-.review-ans.your-bad { background: var(--red-light); color: #8b1f1f; }
-.review-ans.hint { background: var(--accent-light); color: #1a4070; }
+.review-ans.your-ok { 
+  background: var(--green-light); 
+  color: var(--green); 
+  border: 1px solid var(--green);
+}
+.review-ans.your-bad { 
+  background: var(--red-light); 
+  color: var(--red); 
+  border: 1px solid var(--red);
+}
+.review-ans.hint { 
+  background: var(--accent-light); 
+  color: var(--accent); 
+  border: 1px solid var(--accent);
+}
+
+body.dark-mode .review-ans.your-ok { color: #81c784; }
+body.dark-mode .review-ans.your-bad { color: #e57373; }
+body.dark-mode .review-ans.hint { color: #64b5f6; }
+
 
 /* empty state */
 .empty-state {
@@ -636,94 +717,117 @@ select.round-select:focus { outline: none; border-color: var(--accent); }
 }
 .empty-state strong { display: block; font-size: 17px; color: var(--text-secondary); margin-bottom: 6px; font-weight: 600; }
 
-@media (max-width: 580px) {
-  .question-text { font-size: 16px; }
-  .option-btn { font-size: 14px; padding: 12px 14px; }
-  .result-card { padding: 24px 16px; }
-  .stats-row { gap: 8px; }
+@media (max-width: 600px) {
+  .container { padding: 20px 12px 40px; }
+  .site-header h1 { font-size: 1.8rem; }
+  .top-controls { justify-content: center; width: 100%; }
+  .control-btn { flex: 1; justify-content: center; }
+  .stats-row { grid-template-columns: 1fr; }
+  .action-btns .btn { width: 100%; }
+  .import-tabs { flex-direction: column; }
+  .import-tab { border-bottom: none; border-left: 4px solid transparent; text-align: left; }
+  .import-tab.active { border-left-color: var(--accent); border-bottom-color: transparent; }
 }
+
+@media (max-width: 400px) {
+  .site-header h1 { font-size: 1.5rem; }
+  .site-header p { font-size: 14px; }
+  .question-text { font-size: 15px; }
+  .option-btn { font-size: 13px; padding: 10px 12px; }
+  .option-letter { width: 24px; height: 24px; font-size: 11px; }
+}
+
 </style>
 </head>
 <body>
 <div class="container">
 
+<!-- Top Controls -->
+  <div class="top-controls">
+    <button class="control-btn" onclick="toggleTheme()" id="themeBtn">
+      <span id="themeBtnIcon">🌙</span> <span id="themeBtnText" data-i18n="theme_dark">Dark Mode</span>
+    </button>
+    <button class="control-btn" onclick="toggleLanguage()" id="langBtn">
+      🌐 <span id="langBtnText">नेपाली</span>
+    </button>
+  </div>
+
   <!-- Header -->
   <header class="site-header">
-    <h1>MCQ Quiz Practice</h1>
-    <p>Nepal SEE — Class 10 All Subjects</p>
-    <div class="subject-tag" id="subjectTag">No questions loaded</div>
+    <h1 data-i18n="title">MCQ Quiz Practice</h1>
+    <p data-i18n="subtitle">Nepal SEE — Class 10 All Subjects</p>
+    <div class="subject-tag" id="subjectTag" data-i18n="no_questions">No questions loaded</div>
   </header>
 
-  <!-- Import Panel -->
-  <div class="section-label">Import Questions</div>
+
+<!-- Import Panel -->
+  <div class="section-label" data-i18n="import_title">Import Questions</div>
   <div class="import-panel" id="importPanel">
     <div class="import-tabs">
-      <button class="import-tab active" onclick="switchTab('json')">JSON File</button>
-      <button class="import-tab" onclick="switchTab('text')">Text / Paste</button>
+      <button class="import-tab active" onclick="switchTab('text')" data-i18n="tab_text">Text / Paste</button>
+      <button class="import-tab" onclick="switchTab('excel')" data-i18n="tab_excel">Excel File</button>
     </div>
 
-    <!-- JSON Tab -->
-    <div class="import-body" id="tab-json">
-      <div class="drop-zone" id="dropZone">
-        <input type="file" id="jsonFile" accept=".json" />
-        <div class="drop-zone-title">Click to choose a JSON file</div>
-        <div class="drop-zone-sub">or drag and drop here</div>
-      </div>
-      <details class="format-hint">
-        <summary>View JSON format</summary>
-        <pre>[
-  {
-    "subject": "Science",
-    "chapter": "Pressure",
-    "question": "What is the SI unit of pressure?",
-    "options": ["Newton", "Pascal", "Joule", "Watt"],
-    "correct": 1
-  },
-  {
-    "question": "Who wrote Muna Madan?",
-    "options": ["Laxmi Prasad", "Parijat", "BP Koirala", "Bhupi"],
-    "correct": 0
-  }
-]</pre>
-      </details>
-      <div class="status-msg" id="jsonStatus"></div>
-    </div>
 
     <!-- Text Tab -->
-    <div class="import-body" id="tab-text" style="display:none;">
-      <textarea class="text-import" id="textInput" placeholder="Paste your questions here in text format...
-See format guide below."></textarea>
+    <div class="import-body" id="tab-text">
+      <textarea class="text-import" id="textInput" data-i18n-attr="placeholder:paste_placeholder" placeholder="Paste your questions here in any format... (e.g., Question, 4 options, Correct answer)"></textarea>
+      
       <details class="text-format-hint">
-        <summary>View text format</summary>
+        <summary class="hint-summary" data-i18n="view_text_format">View text format guide</summary>
         <div class="hint-body">
-          Write each question block separated by a blank line. Lines starting with A), B), C), D) are options. Mark the correct answer with * at the start.
-          <pre>What is the SI unit of pressure?
-A) Newton
-B) Pascal
-*C) Pascal (Pa) = N/m²
-D) Watt
-
-Which law does a lactometer follow?
-A) Pascal's Law
-*B) Archimedes' Principle
-C) Newton's Law
-D) Boyle's Law</pre>
-          <strong style="font-size:13px;">Rules:</strong> Question line first. Then A) B) C) D). Mark correct answer with * before the letter.
+          <p><strong>Format 1 (Comma/Tab separated):</strong> One question per line.</p>
+          <pre>What is the SI unit of pressure?, Newton, Pascal, Joule, Watt, Pascal</pre>
+          
+          <p><strong>Format 2 (Block format):</strong> Questions separated by blank lines.</p>
+          <pre>1. Who wrote Muna Madan?
+A) Laxmi Prasad Devkota
+B) Parijat
+C) BP Koirala
+D) Bhupi Sherchan
+Correct: A</pre>
+          <p>Serial numbers (1., Q1:) are automatically removed.</p>
         </div>
       </details>
-      <div style="display:flex; gap:10px; margin-top:14px; align-items:center;">
-        <button class="btn btn-primary btn-sm" onclick="parseTextInput()">Load Questions</button>
-        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('textInput').value=''">Clear</button>
+      
+      <div style="display:flex; gap:10px; margin-top:14px; align-items:center; flex-wrap: wrap;">
+        <button class="btn btn-primary btn-sm" onclick="parseTextInput()" data-i18n="load_questions">Load Questions</button>
+        <button class="btn btn-ghost btn-sm" onclick="document.getElementById('textInput').value=''" data-i18n="clear">Clear</button>
       </div>
       <div class="status-msg" id="textStatus"></div>
     </div>
+
+    <!-- Excel Tab -->
+    <div class="import-body" id="tab-excel" style="display:none;">
+      <div class="drop-zone" id="dropZone">
+        <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" />
+        <div class="drop-zone-title" data-i18n="excel_drop_title">Click to choose an Excel file (.xlsx, .xls, .csv)</div>
+        <div class="drop-zone-sub" data-i18n="excel_drop_sub">or drag and drop here</div>
+      </div>
+      
+      <details class="excel-format-hint">
+        <summary class="hint-summary" data-i18n="view_excel_format">View Excel format</summary>
+        <div class="hint-body">
+          <p>The Excel file should have questions and options organized in columns. No headers required.</p>
+          <pre>Col A: Question text
+Col B: Option 1
+Col C: Option 2
+Col D: Option 3
+Col E: Option 4
+Col F: Correct Answer (Index 0-3 or A-D or Option Text)</pre>
+        </div>
+      </details>
+      <div class="status-msg" id="excelStatus"></div>
+    </div>
+
   </div>
 
-  <!-- Settings + Start -->
+
+<!-- Settings + Start -->
   <div id="screen-start">
     <div class="settings-bar">
       <label>
-        Questions per round:
+        <span data-i18n="questions_per_round">Questions per round:</span>
         <select class="round-select" id="numQSelect">
           <option value="5">5</option>
           <option value="10">10</option>
@@ -731,21 +835,22 @@ D) Boyle's Law</pre>
           <option value="all">All</option>
         </select>
       </label>
-      <span class="info-chip" id="totalChip">0 questions loaded</span>
+      <span class="info-chip" id="totalChip" data-i18n="no_questions">0 questions loaded</span>
     </div>
 
     <div class="start-card" id="startCard">
-      <h2>Ready to Practice?</h2>
-      <p id="startDesc">Import questions above using a JSON file or by pasting text, then press Start.</p>
+      <h2 data-i18n="ready_title">Ready to Practice?</h2>
+      <p id="startDesc" data-i18n="ready_desc">Import questions above using an Excel file or by pasting text, then press Start.</p>
       <div class="feature-row">
-        <span class="feature-chip">Timed per question</span>
-        <span class="feature-chip">Instant feedback</span>
-        <span class="feature-chip">Randomized order</span>
-        <span class="feature-chip">Full review at end</span>
+        <span class="feature-chip" data-i18n="feat_timed">Timed per question</span>
+        <span class="feature-chip" data-i18n="feat_feedback">Instant feedback</span>
+        <span class="feature-chip" data-i18n="feat_random">Randomized order</span>
+        <span class="feature-chip" data-i18n="feat_review">Full review at end</span>
       </div>
-      <button class="btn btn-primary" onclick="startQuiz()" id="startBtn" disabled>Start Quiz</button>
+      <button class="btn btn-primary" onclick="startQuiz()" id="startBtn" disabled data-i18n="start_btn">Start Quiz</button>
     </div>
   </div>
+
 
   <!-- Quiz Screen -->
   <div id="screen-quiz">
@@ -780,31 +885,32 @@ D) Boyle's Law</pre>
         </svg>
         <div class="score-center">
           <div class="score-pct" id="scorePct">0%</div>
-          <div class="score-lbl">Score</div>
+          <div class="score-lbl" data-i18n="score">Score</div>
         </div>
       </div>
-      <div class="result-title" id="resultTitle">Quiz Complete</div>
-      <div class="result-sub" id="resultSub">Here are your results.</div>
+      <div class="result-title" id="resultTitle" data-i18n="quiz_complete">Quiz Complete</div>
+      <div class="result-sub" id="resultSub" data-i18n="results_here">Here are your results.</div>
       <div class="stats-row">
         <div class="stat-box">
           <div class="stat-num" id="sCorrect" style="color:var(--green)">0</div>
-          <div class="stat-lbl">Correct</div>
+          <div class="stat-lbl" data-i18n="correct">Correct</div>
         </div>
         <div class="stat-box">
           <div class="stat-num" id="sWrong" style="color:var(--red)">0</div>
-          <div class="stat-lbl">Wrong</div>
+          <div class="stat-lbl" data-i18n="wrong">Wrong</div>
         </div>
         <div class="stat-box">
           <div class="stat-num" id="sTotal" style="color:var(--accent)">0</div>
-          <div class="stat-lbl">Total</div>
+          <div class="stat-lbl" data-i18n="total">Total</div>
         </div>
       </div>
       <div class="action-btns">
-        <button class="btn btn-primary" onclick="startQuiz()">New Round</button>
-        <button class="btn btn-outline" onclick="showReview()">Review Answers</button>
-        <button class="btn btn-ghost" onclick="backToStart()">Import More</button>
+        <button class="btn btn-primary" onclick="startQuiz()" data-i18n="new_round">New Round</button>
+        <button class="btn btn-outline" onclick="showReview()" data-i18n="review_btn">Review Answers</button>
+        <button class="btn btn-ghost" onclick="backToStart()" data-i18n="import_more">Import More</button>
       </div>
     </div>
+
 
     <div class="review-section" id="reviewSection" style="display:none;">
       <h3>Answer Review</h3>
@@ -818,7 +924,93 @@ D) Boyle's Law</pre>
 </div><!-- /container -->
 
 <script>
+// ── i18n Data ─────────────────────────────────────────────────────────────────
+
+const i18nData = {
+  en: {
+    theme_dark: "Dark Mode",
+    theme_light: "Light Mode",
+    title: "MCQ Quiz Practice",
+    subtitle: "Nepal SEE — Class 10 All Subjects",
+    no_questions: "No questions loaded",
+    import_title: "Import Questions",
+    tab_excel: "Excel File",
+    tab_text: "Text / Paste",
+    excel_drop_title: "Click to choose an Excel file (.xlsx, .xls, .csv)",
+    excel_drop_sub: "or drag and drop here",
+    view_excel_format: "View Excel format",
+    paste_placeholder: "Paste your questions here in any format... (e.g., Question, 4 options, Correct answer)",
+    view_text_format: "View text format guide",
+    load_questions: "Load Questions",
+    clear: "Clear",
+    questions_per_round: "Questions per round:",
+    ready_title: "Ready to Practice?",
+    ready_desc: "Import questions above using an Excel file or by pasting text, then press Start.",
+    feat_timed: "Timed per question",
+    feat_feedback: "Instant feedback",
+    feat_random: "Randomized order",
+    feat_review: "Full review at end",
+    start_btn: "Start Quiz",
+    question_n_of: "Question {n} of {total}",
+    score: "Score",
+    quiz_complete: "Quiz Complete",
+    results_here: "Here are your results.",
+    correct: "Correct",
+    wrong: "Wrong",
+    total: "Total",
+    review_title: "Answer Review",
+    new_round: "New Round",
+    review_btn: "Review Answers",
+    import_more: "Import More",
+    hide_review: "Hide Review",
+    time_up: "Time's up. Correct answer: ",
+    msg_score: "Score: ",
+    accuracy: "Accuracy: "
+  },
+  ne: {
+    theme_dark: "डार्क मोड",
+    theme_light: "लाइट मोड",
+    title: "MCQ क्विज अभ्यास",
+    subtitle: "नेपाल SEE — कक्षा १० सबै विषयहरू",
+    no_questions: "कुनै प्रश्नहरू लोड गरिएको छैन",
+    import_title: "प्रश्नहरू आयात गर्नुहोस्",
+    tab_excel: "एक्सेल फाइल",
+    tab_text: "टेक्स्ट / पेस्ट",
+    excel_drop_title: "एक्सेल फाइल चयन गर्न यहाँ क्लिक गर्नुहोस् (.xlsx, .xls, .csv)",
+    excel_drop_sub: "वा यहाँ तानेर ल्याउनुहोस्",
+    view_excel_format: "एक्सेल ढाँचा हेर्नुहोस्",
+    paste_placeholder: "यहाँ कुनै पनि ढाँचामा प्रश्नहरू पेस्ट गर्नुहोस्... (जस्तै: प्रश्न, ४ विकल्प, सही उत्तर)",
+    view_text_format: "टेक्स्ट ढाँचा मार्गदर्शक हेर्नुहोस्",
+    load_questions: "प्रश्नहरू लोड गर्नुहोस्",
+    clear: "सफा गर्नुहोस्",
+    questions_per_round: "प्रति राउन्ड प्रश्न संख्या:",
+    ready_title: "अभ्यासको लागि तयार हुनुहुन्छ?",
+    ready_desc: "माथि एक्सेल फाइल वा टेक्स्ट टाँसेर प्रश्नहरू आयात गर्नुहोस्, त्यसपछि सुरु गर्नुहोस् मा थिच्नुहोस्।",
+    feat_timed: "समयबद्ध प्रश्न",
+    feat_feedback: "तुरुन्त प्रतिक्रिया",
+    feat_random: "क्रमरहित क्रम",
+    feat_review: "अन्तमा पूर्ण पुनरावलोकन",
+    start_btn: "क्विज सुरु गर्नुहोस्",
+    question_n_of: "प्रश्न {n} / {total}",
+    score: "प्राप्तांक",
+    quiz_complete: "क्विज समाप्त",
+    results_here: "तपाईंको नतिजाहरू यहाँ छन्।",
+    correct: "सही",
+    wrong: "गलत",
+    total: "जम्मा",
+    review_title: "उत्तर पुनरावलोकन",
+    new_round: "नयाँ राउन्ड",
+    review_btn: "उत्तरहरू हेर्नुहोस्",
+    import_more: "थप आयात गर्नुहोस्",
+    hide_review: "पुनरावलोकन लुकाउनुहोस्",
+    time_up: "समय सकियो। सही उत्तर: ",
+    msg_score: "प्राप्तांक: ",
+    accuracy: "शुद्धता: "
+  }
+};
+
 // ── State ────────────────────────────────────────────────────────────────────
+let currentLang = 'en';
 let questionBank = [];
 let activeQuestions = [];
 let currentIndex = 0;
@@ -829,88 +1021,206 @@ let timeLeft = 30;
 let answered = false;
 let roundSize = 5;
 
-// ── Tab switching ─────────────────────────────────────────────────────────────
-function switchTab(tab) {
-  document.querySelectorAll('.import-tab').forEach((t,i) => t.classList.remove('active'));
-  document.getElementById('tab-json').style.display = 'none';
-  document.getElementById('tab-text').style.display = 'none';
-  if (tab === 'json') {
-    document.querySelectorAll('.import-tab')[0].classList.add('active');
-    document.getElementById('tab-json').style.display = 'block';
-  } else {
-    document.querySelectorAll('.import-tab')[1].classList.add('active');
-    document.getElementById('tab-text').style.display = 'block';
+// ── i18n Logic ────────────────────────────────────────────────────────────────
+function toggleLanguage() {
+  currentLang = currentLang === 'en' ? 'ne' : 'en';
+  updateUI();
+  const langBtnText = document.getElementById('langBtnText');
+  langBtnText.textContent = currentLang === 'en' ? 'नेपाली' : 'English';
+}
+
+function updateUI() {
+  const lang = i18nData[currentLang];
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (lang[key]) el.textContent = lang[key];
+  });
+  document.querySelectorAll('[data-i18n-attr]').forEach(el => {
+    const attrPair = el.getAttribute('data-i18n-attr').split(':');
+    const attr = attrPair[0];
+    const key = attrPair[1];
+    if (lang[key]) el.setAttribute(attr, lang[key]);
+  });
+  
+  // Dynamic updates
+  if (questionBank.length > 0) {
+    const text = (currentLang === 'ne' ? ' जम्मा प्रश्नहरू लोड गरियो' : ' questions loaded');
+    document.getElementById('totalChip').textContent = questionBank.length + text;
+    
+    if (document.getElementById('screen-quiz').style.display === 'block') {
+      const qText = lang.question_n_of.replace('{n}', currentIndex + 1).replace('{total}', activeQuestions.length);
+      document.getElementById('progressLabel').textContent = qText;
+    }
   }
 }
 
-// ── JSON Import ───────────────────────────────────────────────────────────────
+function toggleTheme() {
+  document.body.classList.toggle('dark-mode');
+  const isDark = document.body.classList.contains('dark-mode');
+  document.getElementById('themeBtnIcon').textContent = isDark ? '☀️' : '🌙';
+  document.getElementById('themeBtnText').setAttribute('data-i18n', isDark ? 'theme_light' : 'theme_dark');
+  
+  // Re-run updateUI to handle the text change for the button properly
+  const lang = i18nData[currentLang];
+  const key = isDark ? 'theme_light' : 'theme_dark';
+  document.getElementById('themeBtnText').textContent = lang[key];
+}
+
+// ── Tab switching ─────────────────────────────────────────────────────────────
+function switchTab(tab) {
+  document.querySelectorAll('.import-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('tab-excel').style.display = 'none';
+  document.getElementById('tab-text').style.display = 'none';
+  
+  const buttons = document.querySelectorAll('.import-tab');
+  if (tab === 'text') {
+    buttons[0].classList.add('active');
+    document.getElementById('tab-text').style.display = 'block';
+  } else {
+    buttons[1].classList.add('active');
+    document.getElementById('tab-excel').style.display = 'block';
+  }
+}
+
+
+// ── Excel Import ──────────────────────────────────────────────────────────────
 const dropZone = document.getElementById('dropZone');
-const jsonFile = document.getElementById('jsonFile');
+const excelFile = document.getElementById('excelFile');
 
-dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-dropZone.addEventListener('drop', e => {
-  e.preventDefault(); dropZone.classList.remove('drag-over');
-  if (e.dataTransfer.files[0]) processJsonFile(e.dataTransfer.files[0]);
-});
-jsonFile.addEventListener('change', e => { if (e.target.files[0]) processJsonFile(e.target.files[0]); });
+if (dropZone) {
+  dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+  dropZone.addEventListener('drop', e => {
+    e.preventDefault(); dropZone.classList.remove('drag-over');
+    if (e.dataTransfer.files[0]) processExcelFile(e.dataTransfer.files[0]);
+  });
+}
+if (excelFile) {
+  excelFile.addEventListener('change', e => { if (e.target.files[0]) processExcelFile(e.target.files[0]); });
+}
 
-function processJsonFile(file) {
+function processExcelFile(file) {
   const reader = new FileReader();
   reader.onload = e => {
     try {
-      const data = JSON.parse(e.target.result);
-      if (!Array.isArray(data) || data.length === 0) throw new Error('Must be a non-empty JSON array.');
-      data.forEach((q, i) => {
-        if (!q.question || !Array.isArray(q.options) || q.options.length < 2 || q.correct === undefined)
-          throw new Error(`Question ${i+1}: missing question, options, or correct field.`);
-      });
-      loadQuestions(data, file.name);
-      showStatus('jsonStatus', 'ok', `Loaded ${data.length} questions from "${file.name}".`);
+      const data = new Uint8Array(e.target.result);
+      const workbook = XLSX.read(data, { type: 'array' });
+      const firstSheetName = workbook.SheetNames[0];
+      const worksheet = workbook.Sheets[firstSheetName];
+      const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      
+      const parsed = rows.map((row, idx) => {
+        if (!row || row.length < 3) return null;
+        return smartParseRow(row);
+      }).filter(Boolean);
+
+      if (parsed.length === 0) throw new Error('No valid questions found in sheet.');
+      loadQuestions(parsed, file.name);
+      showStatus('excelStatus', 'ok', `Loaded ${parsed.length} questions from "${file.name}".`);
     } catch(err) {
-      showStatus('jsonStatus', 'err', 'Error: ' + err.message);
+      showStatus('excelStatus', 'err', 'Error: ' + err.message);
     }
   };
-  reader.readAsText(file);
+  reader.readAsArrayBuffer(file);
 }
 
-// ── Text Import ───────────────────────────────────────────────────────────────
+// ── Text Parsing Logic ────────────────────────────────────────────────────────
+function cleanQuestion(q) {
+  // Strips "1. ", "Q1: ", "2) ", "10. ", etc from the start
+  return q.replace(/^([Qq]\d+[:.\s]+|\d+[:.\s)]+)/, '').trim();
+}
+
+function smartParseRow(cells) {
+  // Expected: Question, OptA, OptB, OptC, OptD, Correct
+  if (cells.length < 3) return null;
+  
+  const question = cleanQuestion(String(cells[0]));
+  let options = [];
+  let correctIdx = -1;
+  
+  // Collect options - stop if we hit an empty cell or the end
+  let i = 1;
+  while (i < cells.length - 1 && i <= 5) {
+    if (cells[i]) options.push(String(cells[i]).trim());
+    i++;
+  }
+  
+  // Last cell is correct answer
+  const correctVal = String(cells[cells.length - 1] || cells[options.length + 1] || '').trim();
+  
+  if (options.length < 2) return null;
+
+  // Try to determine correct index
+  const labelIdx = ['A','B','C','D','E','F'].indexOf(correctVal.toUpperCase());
+  if (labelIdx !== -1 && labelIdx < options.length) {
+    correctIdx = labelIdx;
+  } else if (!isNaN(correctVal) && correctVal !== '' && parseInt(correctVal) < options.length) {
+    correctIdx = parseInt(correctVal);
+  } else {
+    // Exact text match
+    correctIdx = options.findIndex(opt => opt.toLowerCase() === correctVal.toLowerCase());
+  }
+
+  if (correctIdx === -1) correctIdx = 0; // default
+
+  return { question, options, correct: correctIdx };
+}
+
 function parseTextInput() {
   const raw = document.getElementById('textInput').value.trim();
-  if (!raw) { showStatus('textStatus', 'err', 'Nothing to parse. Paste your questions first.'); return; }
+  if (!raw) { showStatus('textStatus', 'err', 'Nothing to parse.'); return; }
 
   try {
-    const blocks = raw.split(/\n\s*\n/).filter(b => b.trim());
     const questions = [];
-
-    blocks.forEach((block, bi) => {
+    // Logic for block format or csv-like lines
+    const blocks = raw.split(/\n\s*\n/).filter(b => b.trim());
+    
+    blocks.forEach(block => {
       const lines = block.split('\n').map(l => l.trim()).filter(l => l);
+      
+      // CSV logic: if line has many commas/tabs
+      if (lines.length === 1 && (lines[0].includes(',') || lines[0].includes('\t'))) {
+        const sep = lines[0].includes('\t') ? '\t' : ',';
+        const parts = lines[0].split(sep).map(p => p.trim());
+        const p = smartParseRow(parts);
+        if (p) questions.push(p);
+        return;
+      }
+
       if (lines.length < 3) return;
 
-      const questionLine = lines[0];
-      const optionLines = lines.slice(1);
+      const qText = cleanQuestion(lines[0]);
       const options = [];
       let correct = -1;
-      const letters = ['a','b','c','d'];
-
-      optionLines.forEach(line => {
-        let isCorrect = false;
+      
+      lines.slice(1).forEach((line, li) => {
         let text = line;
+        let isCorrect = false;
         if (text.startsWith('*')) { isCorrect = true; text = text.slice(1).trim(); }
-        // Strip leading A) B) C) D) or A. B. C. D.
-        text = text.replace(/^[A-Da-d][).]\s*/, '').trim();
+        
+        // Detect "Correct: A" or similar
+        if (text.toLowerCase().startsWith('correct:')) {
+          const val = text.split(':')[1].trim();
+          const idx = ['A','B','C','D','E'].indexOf(val.toUpperCase());
+          if (idx !== -1) correct = idx;
+          return;
+        }
+
+        // Strip labels A) B) C)
+        text = text.replace(/^[A-Fa-f][).]\s*/, '').trim();
         if (text) {
           if (isCorrect) correct = options.length;
           options.push(text);
         }
       });
-
-      if (options.length >= 2 && correct >= 0) {
-        questions.push({ question: questionLine, options, correct });
+      
+      if (options.length >= 2) {
+        if (correct === -1) correct = 0; // Default
+        questions.push({ question: qText, options, correct });
       }
     });
 
-    if (questions.length === 0) throw new Error('No valid questions found. Check the format guide.');
+    if (questions.length === 0) throw new Error('No valid questions found.');
     loadQuestions(questions, 'Text input');
     showStatus('textStatus', 'ok', `Parsed ${questions.length} questions successfully.`);
   } catch(err) {
@@ -920,22 +1230,22 @@ function parseTextInput() {
 
 function showStatus(id, type, msg) {
   const el = document.getElementById(id);
-  el.className = 'status-msg ' + type;
-  el.textContent = msg;
+  if (el) {
+    el.className = 'status-msg ' + type;
+    el.textContent = msg;
+  }
 }
 
 function loadQuestions(data, source) {
   questionBank = data;
-  const subjects = [...new Set(data.map(q => q.subject).filter(Boolean))];
-  const subjectText = subjects.length > 0 ? subjects.join(', ') : 'Custom';
-  document.getElementById('subjectTag').textContent = subjectText + ' — ' + data.length + ' questions';
-  document.getElementById('totalChip').textContent = data.length + ' questions loaded';
+  document.getElementById('subjectTag').textContent = source + ' — ' + data.length + ' questions';
+  document.getElementById('totalChip').textContent = data.length + (currentLang === 'ne' ? ' प्रश्नहरू लोड गरियो' : ' questions loaded');
   document.getElementById('startBtn').disabled = false;
   document.getElementById('startDesc').textContent =
-    `${data.length} questions loaded. Select how many you want per round and press Start.`;
+    `${data.length} ` + (currentLang === 'ne' ? 'प्रश्नहरू लोड गरियो। राउन्ड चयन गर्नुहोस् र सुरु गर्नुहोस्।' : 'questions loaded. Select round size and press Start.');
 }
 
-// ── Settings ──────────────────────────────────────────────────────────────────
+// ── Quiz Logic ────────────────────────────────────────────────────────────────
 document.getElementById('numQSelect').addEventListener('change', function() {
   roundSize = this.value === 'all' ? 9999 : parseInt(this.value);
 });
@@ -949,7 +1259,6 @@ function shuffle(arr) {
   return a;
 }
 
-// ── Quiz ──────────────────────────────────────────────────────────────────────
 function startQuiz() {
   if (questionBank.length === 0) return;
   const n = Math.min(roundSize, questionBank.length);
@@ -986,24 +1295,21 @@ function renderQuestion() {
 
   const q = activeQuestions[currentIndex];
   const total = activeQuestions.length;
+  const lang = i18nData[currentLang];
 
-  document.getElementById('qMeta').textContent = (q.subject ? q.subject + ' — ' : '') + (q.chapter ? q.chapter : '');
+  document.getElementById('qMeta').textContent = `Q ${currentIndex + 1}`;
   document.getElementById('questionText').textContent = q.question;
-  document.getElementById('progressLabel').textContent = `Question ${currentIndex+1} of ${total}`;
+  document.getElementById('progressLabel').textContent = lang.question_n_of.replace('{n}', currentIndex+1).replace('{total}', total);
   document.getElementById('progressFill').style.width = (currentIndex / total * 100) + '%';
-  document.getElementById('subjectLabel').textContent = q.subject || '';
 
-  // re-animate card
   const card = document.getElementById('questionCard');
   card.style.animation = 'none'; card.offsetHeight; card.style.animation = '';
 
-  // dots
   document.querySelectorAll('.q-dot').forEach((d, i) => {
     d.classList.remove('active');
     if (i === currentIndex) d.classList.add('active');
   });
 
-  // Options
   const list = document.getElementById('optionsList');
   list.innerHTML = '';
   const letters = ['A','B','C','D','E','F'];
@@ -1015,12 +1321,10 @@ function renderQuestion() {
     list.appendChild(btn);
   });
 
-  // Reset feedback
   const fb = document.getElementById('feedbackStrip');
   fb.className = 'feedback-strip';
   fb.textContent = '';
 
-  // Timer
   timeLeft = 30;
   updateTimer(30);
   timerInterval = setInterval(() => {
@@ -1046,7 +1350,7 @@ function autoTimeout() {
 
   const fb = document.getElementById('feedbackStrip');
   fb.className = 'feedback-strip timeout';
-  fb.textContent = `Time's up. Correct answer: ${q.options[q.correct]}`;
+  fb.textContent = i18nData[currentLang].time_up + q.options[q.correct];
   scheduleNext();
 }
 
@@ -1071,10 +1375,10 @@ function selectAnswer(idx) {
   const fb = document.getElementById('feedbackStrip');
   if (isCorrect) {
     fb.className = 'feedback-strip correct';
-    fb.textContent = 'Correct.';
+    fb.textContent = currentLang === 'ne' ? 'सही उत्तर!' : 'Correct!';
   } else {
     fb.className = 'feedback-strip wrong';
-    fb.textContent = `Incorrect. Correct answer: ${q.options[q.correct]}`;
+    fb.textContent = (currentLang === 'ne' ? 'गलत। सही उत्तर: ' : 'Incorrect. Correct answer: ') + q.options[q.correct];
   }
   scheduleNext();
 }
@@ -1092,12 +1396,12 @@ function scheduleNext() {
   }, 1600);
 }
 
-// ── Results ───────────────────────────────────────────────────────────────────
 function showResult() {
   clearInterval(timerInterval);
   document.getElementById('screen-quiz').style.display = 'none';
   document.getElementById('screen-result').style.display = 'block';
-
+  
+  const lang = i18nData[currentLang];
   const total = activeQuestions.length;
   const pct = Math.round(score/total*100);
 
@@ -1105,14 +1409,6 @@ function showResult() {
   document.getElementById('sCorrect').textContent = score;
   document.getElementById('sWrong').textContent = total - score;
   document.getElementById('sTotal').textContent = total;
-
-  const titles = pct===100 ? ['Perfect!','Every answer was correct.'] :
-                 pct>=80   ? ['Excellent','Very strong performance.'] :
-                 pct>=60   ? ['Good Work','Keep reviewing to improve.'] :
-                 pct>=40   ? ['Keep Practicing','Review the material and try again.'] :
-                             ['Keep Going','Study the chapter and retake the quiz.'];
-  document.getElementById('resultTitle').textContent = titles[0];
-  document.getElementById('resultSub').textContent = titles[1];
 
   const circumference = 377;
   const offset = circumference - (pct/100)*circumference;
@@ -1127,6 +1423,7 @@ function showReview() {
   section.style.display = 'block';
   container.innerHTML = '';
   const letters = ['A','B','C','D','E','F'];
+  const lang = i18nData[currentLang];
 
   activeQuestions.forEach((q, i) => {
     const ua = userAnswers[i];
@@ -1138,17 +1435,17 @@ function showReview() {
 
     let ansHTML = '';
     if (timedOut) {
-      ansHTML = `<div class="review-ans hint">Correct: ${letters[q.correct]}. ${q.options[q.correct]}</div>
-                 <div class="review-ans your-bad">No answer — timed out</div>`;
+      ansHTML = `<div class="review-ans hint">${lang.correct}: ${letters[q.correct]}. ${q.options[q.correct]}</div>
+                 <div class="review-ans your-bad">${currentLang === 'ne' ? 'समय सकियो' : 'Timed out'}</div>`;
     } else if (!isCorrect) {
-      ansHTML = `<div class="review-ans your-bad">Your answer: ${letters[ua.selected]}. ${q.options[ua.selected]}</div>
-                 <div class="review-ans hint">Correct: ${letters[q.correct]}. ${q.options[q.correct]}</div>`;
+      ansHTML = `<div class="review-ans your-bad">${currentLang === 'ne' ? 'तपाईको उत्तर' : 'Your answer'}: ${letters[ua.selected]}. ${q.options[ua.selected]}</div>
+                 <div class="review-ans hint">${lang.correct}: ${letters[q.correct]}. ${q.options[q.correct]}</div>`;
     } else {
-      ansHTML = `<div class="review-ans your-ok">Correct: ${letters[ua.selected]}. ${q.options[ua.selected]}</div>`;
+      ansHTML = `<div class="review-ans your-ok">${lang.correct}: ${letters[ua.selected]}. ${q.options[ua.selected]}</div>`;
     }
 
     card.innerHTML = `
-      <div class="review-q-num">${isCorrect ? 'Correct' : 'Wrong'} — Q${i+1}${q.subject ? ' · '+q.subject : ''}</div>
+      <div class="review-q-num">${isCorrect ? lang.correct : lang.wrong} — Q${i+1}</div>
       <div class="review-question">${q.question}</div>
       <div>${ansHTML}</div>
     `;
@@ -1162,6 +1459,15 @@ function backToStart() {
   document.getElementById('screen-start').style.display = 'block';
   document.getElementById('reviewSection').style.display = 'none';
 }
+
+if (typeof XLSX === 'undefined') {
+
+  const script = document.createElement('script');
+  script.src = "https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js";
+  document.head.appendChild(script);
+}
+updateUI(); // Init labels
+
 </script>
 </body>
 </html>
