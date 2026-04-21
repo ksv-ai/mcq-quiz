@@ -1127,9 +1127,12 @@ function processExcelFile(file) {
 
 // ── Text Parsing Logic ────────────────────────────────────────────────────────
 function cleanQuestion(q) {
-  // Strips "1. ", "Q1: ", "2) ", "10. ", etc from the start
-  return q.replace(/^([Qq]\d+[:.\s]+|\d+[:.\s)]+)/, '').trim();
+  // Strips "1. ", "५०. ", "Q1: ", "(5) ", "10) ", etc.
+  // Supports English (0-9) and Nepali (०-९) digits
+  return q.replace(/^([Qq]?[0-9\u0966-\u096F]+|[(][0-9\u0966-\u096F]+[)])[:.\s)]+\s*/u, '').trim();
 }
+
+
 
 function smartParseRow(cells) {
   // Expected: Question, OptA, OptB, OptC, OptD, Correct
