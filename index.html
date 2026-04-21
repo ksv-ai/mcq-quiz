@@ -740,6 +740,17 @@ body.dark-mode .review-ans.hint { color: #64b5f6; }
   .option-letter { width: 24px; height: 24px; font-size: 11px; }
 }
 
+/* Footer */
+.site-footer {
+  text-align: center;
+  margin-top: 40px;
+  padding-top: 20px;
+  border-top: 1.5px solid var(--border-light);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+}
+.heart { color: var(--red); margin: 0 4px; }
 </style>
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
 
@@ -880,9 +891,9 @@ Col F: Correct Answer (Index 0-3 or A-D or Option Text)</pre>
     </div>
 
     <div class="question-card" id="questionCard">
-      <div class="q-meta" id="qMeta">Question 1</div>
       <div class="question-text" id="questionText">Loading...</div>
     </div>
+
 
     <div class="options-list" id="optionsList"></div>
     <div class="feedback-strip" id="feedbackStrip"></div>
@@ -934,7 +945,12 @@ Col F: Correct Answer (Index 0-3 or A-D or Option Text)</pre>
     </div>
   </div>
 
+  <footer class="site-footer">
+    Developed with <span class="heart">❤</span> by <strong>Keshav Poudel</strong>
+  </footer>
+
 </div><!-- /container -->
+
 
 <script>
 // ── i18n Data ─────────────────────────────────────────────────────────────────
@@ -1342,8 +1358,8 @@ function renderQuestion() {
   const total = activeQuestions.length;
   const lang = i18nData[currentLang];
 
-  document.getElementById('qMeta').textContent = `Q ${currentIndex + 1}`;
   document.getElementById('questionText').textContent = q.question;
+
   document.getElementById('progressLabel').textContent = lang.question_n_of.replace('{n}', currentIndex+1).replace('{total}', total);
   document.getElementById('progressFill').style.width = (currentIndex / total * 100) + '%';
 
