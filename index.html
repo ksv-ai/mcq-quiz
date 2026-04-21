@@ -738,8 +738,16 @@ body.dark-mode .review-ans.hint { color: #64b5f6; }
   .option-letter { width: 24px; height: 24px; font-size: 11px; }
 }
 
-</style>
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+  <script>
+    window.MathJax = {
+      tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+      svg: { fontCache: 'global' }
+    };
+  </script>
 </head>
+
 <body>
 <div class="container">
 
@@ -1336,7 +1344,13 @@ function renderQuestion() {
     updateTimer(timeLeft);
     if (timeLeft <= 0) { clearInterval(timerInterval); if (!answered) autoTimeout(); }
   }, 1000);
+
+  // Trigger MathJax rendering
+  if (window.MathJax && typeof MathJax.typeset === 'function') {
+    MathJax.typeset();
+  }
 }
+
 
 function updateTimer(t) {
   const fill = document.getElementById('timerFill');
@@ -1455,8 +1469,14 @@ function showReview() {
     `;
     container.appendChild(card);
   });
+
+  // Trigger MathJax rendering
+  if (window.MathJax && typeof MathJax.typeset === 'function') {
+    MathJax.typeset();
+  }
   section.scrollIntoView({ behavior: 'smooth' });
 }
+
 
 function backToStart() {
   document.getElementById('screen-result').style.display = 'none';
