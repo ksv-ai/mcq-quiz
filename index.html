@@ -848,7 +848,7 @@ Col F: Correct Answer (Index 0-3 or A-D or Option Text)</pre>
 
 
 <!-- Settings + Start -->
-  <div id="screen-start">
+    <div id="screen-start">
     <div class="settings-bar">
       <label>
         <span data-i18n="questions_per_round">Questions per round:</span>
@@ -859,8 +859,18 @@ Col F: Correct Answer (Index 0-3 or A-D or Option Text)</pre>
           <option value="all">All</option>
         </select>
       </label>
+      <label>
+        <span data-i18n="time_limit">Time Limit (per Q):</span>
+        <select class="round-select" id="timerSelect">
+          <option value="0" data-i18n="none">None</option>
+          <option value="15">15s</option>
+          <option value="30" selected>30s</option>
+          <option value="60">60s</option>
+        </select>
+      </label>
       <span class="info-chip" id="totalChip" data-i18n="no_questions">0 questions loaded</span>
     </div>
+
 
     <div class="start-card" id="startCard">
       <h2 data-i18n="ready_title">Ready to Practice?</h2>
@@ -994,9 +1004,13 @@ const i18nData = {
     hide_review: "Hide Review",
     time_up: "Time's up. Correct answer: ",
     msg_score: "Score: ",
-    accuracy: "Accuracy: "
+    accuracy: "Accuracy: ",
+    time_limit: "Time Limit (per Q):",
+    none: "None",
+    time_taken: "Time taken: {s}s"
   },
   ne: {
+
     theme_dark: "डार्क मोड",
     theme_light: "लाइट मोड",
     title: "MCQ क्विज अभ्यास",
@@ -1034,9 +1048,13 @@ const i18nData = {
     hide_review: "पुनरावलोकन लुकाउनुहोस्",
     time_up: "समय सकियो। सही उत्तर: ",
     msg_score: "प्राप्तांक: ",
-    accuracy: "शुद्धता: "
+    accuracy: "शुद्धता: ",
+    time_limit: "समय सीमा (प्रति प्रश्न):",
+    none: "छैन",
+    time_taken: "लागेको समय: {s}s"
   }
 };
+
 
 // ── State ────────────────────────────────────────────────────────────────────
 let currentLang = 'en';
@@ -1046,9 +1064,12 @@ let currentIndex = 0;
 let userAnswers = [];
 let score = 0;
 let timerInterval = null;
+let timerLimit = 30; // 0 means no timer
 let timeLeft = 30;
+let qStartTime = 0;
 let answered = false;
 let roundSize = 5;
+
 
 // ── i18n Logic ────────────────────────────────────────────────────────────────
 function toggleLanguage() {
@@ -1310,6 +1331,10 @@ function loadQuestions(data, source) {
 document.getElementById('numQSelect').addEventListener('change', function() {
   roundSize = this.value === 'all' ? 9999 : parseInt(this.value);
 });
+document.getElementById('timerSelect').addEventListener('change', function() {
+  timerLimit = parseInt(this.value);
+});
+
 
 function shuffle(arr) {
   const a = [...arr];
@@ -1386,13 +1411,21 @@ function renderQuestion() {
   fb.className = 'feedback-strip';
   fb.textContent = '';
 
-  timeLeft = 30;
-  updateTimer(30);
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    updateTimer(timeLeft);
-    if (timeLeft <= 0) { clearInterval(timerInterval); if (!answered) autoTimeout(); }
-  }, 1000);
+  const timerBar = document.querySelector('.timer-bar');
+  if (timerLimit > 0) {
+    timerBar.style.display = 'block';
+    timeLeft = timerLimit;
+    updateTimer(timerLimit);
+    timerInterval = setInterval(() => {
+      timeLeft--;
+      updateTimer(timeLeft);
+      if (timeLeft <= 0) { clearInterval(timerInterval); if (!answered) autoTimeout(); }
+    }, 1000);
+  } else {
+    timerBar.style.display = 'none';
+  }
+
+  qStartTime = Date.now();
 
   // Trigger MathJax rendering
   if (window.MathJax && typeof MathJax.typeset === 'function') {
@@ -1401,18 +1434,20 @@ function renderQuestion() {
 }
 
 
+
 function updateTimer(t) {
   const fill = document.getElementById('timerFill');
-  fill.style.width = (t/30*100) + '%';
-  fill.className = 'timer-fill' + (t <= 8 ? ' danger' : t <= 15 ? ' warn' : '');
+  fill.style.width = (t/timerLimit*100) + '%';
+  fill.className = 'timer-fill' + (t <= 5 ? ' danger' : t <= (timerLimit/2) ? ' warn' : '');
 }
+
 
 function autoTimeout() {
   answered = true;
   const q = activeQuestions[currentIndex];
   const btns = document.querySelectorAll('.option-btn');
   btns.forEach((b, i) => { b.disabled = true; if (i === q.correct) b.classList.add('revealed'); });
-  userAnswers.push({ selected: -1, correct: q.correct });
+  userAnswers.push({ selected: -1, correct: q.correct, time: timerLimit });
   markDot(currentIndex, false);
 
   const fb = document.getElementById('feedbackStrip');
@@ -1421,9 +1456,11 @@ function autoTimeout() {
   scheduleNext();
 }
 
+
 function selectAnswer(idx) {
   if (answered) return;
   answered = true;
+  const timeTaken = Math.round((Date.now() - qStartTime) / 1000);
   clearInterval(timerInterval);
 
   const q = activeQuestions[currentIndex];
@@ -1436,8 +1473,9 @@ function selectAnswer(idx) {
   });
 
   if (isCorrect) score++;
-  userAnswers.push({ selected: idx, correct: q.correct });
+  userAnswers.push({ selected: idx, correct: q.correct, time: timeTaken });
   markDot(currentIndex, isCorrect);
+
 
   const fb = document.getElementById('feedbackStrip');
   if (isCorrect) {
@@ -1501,6 +1539,8 @@ function showReview() {
     card.className = 'review-card ' + (isCorrect ? 'r-correct' : 'r-wrong');
 
     let ansHTML = '';
+    const timeTakenStr = lang.time_taken.replace('{s}', ua.time || 0);
+
     if (timedOut) {
       ansHTML = `<div class="review-ans hint">${lang.correct}: ${letters[q.correct]}. ${q.options[q.correct]}</div>
                  <div class="review-ans your-bad">${currentLang === 'ne' ? 'समय सकियो' : 'Timed out'}</div>`;
@@ -1512,12 +1552,16 @@ function showReview() {
     }
 
     card.innerHTML = `
-      <div class="review-q-num">${isCorrect ? lang.correct : lang.wrong} — Q${i+1}</div>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:7px;">
+        <div class="review-q-num">${isCorrect ? lang.correct : lang.wrong} — Q${i+1}</div>
+        <div style="font-size:11px; color:var(--text-muted); font-weight:600;">${timeTakenStr}</div>
+      </div>
       <div class="review-question">${q.question}</div>
       <div>${ansHTML}</div>
     `;
     container.appendChild(card);
   });
+
 
   // Trigger MathJax rendering
   if (window.MathJax && typeof MathJax.typeset === 'function') {
